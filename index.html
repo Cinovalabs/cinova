@@ -46,6 +46,25 @@ main{max-width:1200px;margin:auto;padding:22px 20px 60px}.hero{min-height:290px;
 .trailer-link{display:inline-flex;align-items:center;gap:7px;background:#ffffff16;border:1px solid #ffffff38;color:white;padding:10px 13px;border-radius:9px;text-decoration:none;font-weight:650;font-size:13px}
 .feature-tag{display:inline-block;background:#e5b84b20;color:var(--accent);border:1px solid #e5b84b50;border-radius:30px;padding:4px 8px;font-size:10px;font-weight:800;letter-spacing:.7px}
 @media(max-width:650px){.detail-backdrop{min-height:145px;padding:14px}}
+
+/* CINOVA V2 — TMDB discovery */
+.tmdb-toolbar{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-top:26px}
+.tmdb-toolbar h2{margin:0;font-size:20px}
+.tmdb-actions{display:flex;gap:8px;flex-wrap:wrap}
+.tmdb-actions button,.settings-btn{border:1px solid var(--line);background:var(--panel2);color:var(--text);padding:9px 12px;border-radius:9px}
+.tmdb-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(135px,1fr));gap:15px;margin-top:14px}
+.tmdb-card{background:var(--panel);border:1px solid var(--line);border-radius:13px;overflow:hidden;min-width:0;cursor:pointer}
+.tmdb-card .poster{height:205px;position:relative}
+.tmdb-card .poster img{width:100%;height:100%;object-fit:cover}
+.tmdb-card .card-info{padding:10px}
+.tmdb-rating{color:var(--accent);font-size:11px;margin-top:5px}
+.tmdb-overview{color:#b7c0ce;line-height:1.6;font-size:14px}
+.settings-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.settings-row input{flex:1;min-width:180px;background:#090d15;border:1px solid var(--line);border-radius:9px;color:white;padding:11px}
+.settings-note{font-size:12px;color:var(--muted);line-height:1.55}
+.tmdb-poster-large{width:120px;height:180px;object-fit:cover;border-radius:10px;float:left;margin:0 15px 10px 0}
+@media(max-width:650px){.tmdb-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.tmdb-card .poster{height:210px}}
+
 </style>
 </head>
 <body>
@@ -60,8 +79,14 @@ main{max-width:1200px;margin:auto;padding:22px 20px 60px}.hero{min-height:290px;
  <button data-view="saved"><b>☆</b>My List</button>
 </nav>
 <main>
-<section id="hero" class="hero"><div class="hero-content"><div class="eyebrow">CINOVA V4 · Your screen. Your cinema.</div><h1>Movie night<br>starts here.</h1><p>Discover films from the Internet Archive or play videos already saved on your phone. Your watchlist and online playback progress stay on this device.</p><div class="actions"><button class="primary" id="exploreBtn">Explore movies</button><button class="secondary" id="localBtn">▶ Play a local video</button></div></div></section>
+<section id="hero" class="hero"><div class="hero-content"><div class="eyebrow">CINOVA V2 · Your world of entertainment.</div><h1>Movie night<br>starts here.</h1><p>Discover trending films, explore movie details and build your watchlist. You can also play videos saved on your phone.</p><div class="actions"><button class="primary" id="exploreBtn">Explore movies</button><button class="secondary" id="localBtn">▶ Play a local video</button></div></div></section>
 <div id="homeView">
+  
+  <div class="panel">
+    <div class="tmdb-toolbar"><h2>Discover with TMDB</h2><div class="tmdb-actions"><button id="tmdbSettings" class="settings-btn">⚙ API settings</button><button id="tmdbTrending" class="settings-btn">Trending</button><button id="tmdbPopular" class="settings-btn">Popular</button></div></div>
+    <p class="settings-note" id="tmdbStatus">Connect your TMDB API key in API settings to load live movie discovery.</p>
+    <div class="tmdb-grid" id="tmdbGrid"></div>
+  </div>
   <div id="continueSection" class="hidden"><div class="section-head"><h2>Continue watching</h2><small>Pick up where you left off</small></div><div id="continueGrid" class="grid"></div></div>
   <div class="section-head"><h2>Popular on the Archive</h2><small>Sorted by downloads</small></div><div id="popular" class="grid"></div>
   <div class="section-head"><h2>Explore the library</h2><small>Find your next watch</small></div><p class="recommend-note">Browse by category or search the Archive catalogue. Results depend on what is available there.</p>
@@ -71,8 +96,18 @@ main{max-width:1200px;margin:auto;padding:22px 20px 60px}.hero{min-height:290px;
 <div id="savedView" class="hidden"><div class="section-head"><h2>My watchlist</h2><small>Saved on this device</small></div><div id="savedMovies" class="grid"></div></div>
 <div id="discoverView" class="hidden"><div class="section-head"><h2>Discover</h2></div><div class="panel"><h3>Find something to watch</h3><p>Search the archive catalogue or choose a category above. Availability and playback formats depend on each title.</p><button class="primary" id="discoverSearch">Search archive</button></div><div class="section-head"><h2>Watch videos from your phone</h2></div><div class="panel"><div class="local-row"><label class="file-btn">Choose video <input id="localFile" type="file" accept="video/*"></label><span class="hint">MP4, WebM and other formats supported by your browser.</span></div><div id="localName" class="status"></div><video id="localPlayer" class="player hidden" controls playsinline></video></div></div>
 <div class="panel"><h3>About online movies</h3><p>CINOVA searches the Internet Archive catalogue. A listing does not automatically mean a film is public domain or cleared for every use—check the rights information on the title's Archive page before watching or sharing. This starter app does not host or upload movies.</p></div>
-<div class="footer">CINOVA • V4 • Your personal movie corner</div>
+<div class="footer">CINOVA • V2 • Your world of entertainment</div>
 </main>
+
+<div id="tmdbSettingsModal" class="modal"><div class="dialog">
+ <div class="dialog-head"><div class="eyebrow">CINOVA CONNECTION</div><button class="close" data-close="tmdbSettingsModal">✕</button></div>
+ <h2>Connect TMDB</h2>
+ <p class="settings-note">Paste your TMDB API Key (v3) below. It will be saved only in this browser on this device. Do not paste your key into GitHub or share it publicly.</p>
+ <div class="settings-row"><input id="tmdbKeyInput" type="password" autocomplete="off" placeholder="TMDB API Key (v3)"><button class="primary" id="saveTmdbKey">Save key</button></div>
+ <div class="settings-row"><button class="secondary" id="clearTmdbKey">Remove saved key</button></div>
+ <p class="settings-note">Security note: CINOVA is a public static website. A key entered here is not embedded in the published HTML, but browser-based API requests can still expose it to someone inspecting network traffic. For a production public app, use a small server-side proxy and follow TMDB's terms and attribution requirements.</p>
+</div></div>
+
 <div id="detailModal" class="modal"><div class="dialog"><div class="dialog-head"><div class="eyebrow">MOVIE DETAILS</div><button class="close" data-close="detailModal">✕</button></div><div id="detailBody"></div></div></div>
 <div id="playModal" class="modal"><div class="dialog"><div class="dialog-head"><h3 id="playTitle">Now playing</h3><button class="close" data-close="playModal">✕</button></div><video id="onlinePlayer" class="player" controls playsinline></video><div class="actions" style="margin-top:12px"><button class="secondary" id="vlcBtn">Open in VLC</button><a id="archiveLink" class="secondary" target="_blank" rel="noopener" style="text-decoration:none;padding:11px 15px;border-radius:10px">Archive page</a></div><p class="hint">If playback does not start, try the Archive page or open the stream in a compatible player. VLC must be installed for the VLC button to work.</p></div></div>
 <script>
@@ -100,8 +135,8 @@ function renderSaved(){let a=saved();$('#savedMovies').innerHTML=a.length?a.map(
 async function searchMovies(q='',cat='all'){
  currentQuery=q;currentCategory=cat;$('#status').textContent='Searching the Internet Archive…';$('#movies').innerHTML='';
  let terms=['mediatype:movies'];
- if(q) terms.push(`(${q.trim().split(/\s+/).map(w=>`title:${w}`).join(' AND ')})`);
- if(cat!=='all') terms.push(`(${cat.split(' ').map(w=>`subject:${w}`).join(' AND ')})`);
+ if(q) terms.push('(' + q.trim().split(/\s+/).map(w=>'title:'+w).join(' AND ') + ')');
+ if(cat!=='all') terms.push('(' + cat.split(' ').map(w=>'subject:'+w).join(' AND ') + ')');
  const params=new URLSearchParams({q:terms.join(' AND '),fl:'identifier,title,year,description',rows:'36',page:'1',output:'json'});
  try{
   const r=await fetch(`${API}?${params}`);if(!r.ok)throw Error('Network response failed');
@@ -177,6 +212,77 @@ document.addEventListener('click',e=>{
 });
 $('#onlinePlayer').addEventListener('timeupdate',()=>{if(currentMovie&&$('#onlinePlayer').duration){saveHistory(currentMovie,$('#onlinePlayer').currentTime,$('#onlinePlayer').duration)}});
 $('#onlinePlayer').addEventListener('ended',()=>{if(currentMovie){localStorage.setItem('cinova_history',JSON.stringify(historyList().filter(x=>x.identifier!==currentMovie.identifier)));renderContinue()}});
-searchMovies();loadPopular();renderSaved();renderContinue();
+
+// ---- CINOVA V2: TMDB discovery layer ----
+const TMDB_BASE='https://api.themoviedb.org/3';
+const TMDB_IMG='https://image.tmdb.org/t/p/w500';
+let tmdbMovies=[], tmdbMode='trending';
+function tmdbKey(){return localStorage.getItem('cinova_tmdb_v3_key')||''}
+function tmdbImage(path){return path?TMDB_IMG+path:''}
+function tmdbCard(m){
+ const title=m.title||m.name||'Untitled';
+ const year=(m.release_date||m.first_air_date||'').slice(0,4);
+ const image=tmdbImage(m.poster_path);
+ return `<article class="tmdb-card" data-tmdb-detail="${Number(m.id)}">
+  <div class="poster">${image?`<img loading="lazy" src="${esc(image)}" alt="${esc(title)} poster" onerror="this.remove()">`:'🎬'}</div>
+  <div class="card-info"><div class="card-title" title="${esc(title)}">${esc(title)}</div>
+  <div class="meta">${esc(year||'Release date unavailable')}</div>
+  <div class="tmdb-rating">★ ${Number(m.vote_average||0).toFixed(1)} / 10</div></div></article>`;
+}
+async function tmdbRequest(path){
+ const key=tmdbKey();
+ if(!key) throw new Error('Add your TMDB v3 API key in API settings first.');
+ const url=new URL(TMDB_BASE+path);
+ url.searchParams.set('api_key',key);
+ const response=await fetch(url.toString());
+ const data=await response.json().catch(()=>({}));
+ if(!response.ok) throw new Error(data.status_message||'TMDB request failed. Check your key and connection.');
+ return data;
+}
+async function loadTmdb(mode='trending',query=''){
+ tmdbMode=mode;
+ const status=$('#tmdbStatus'),grid=$('#tmdbGrid');
+ if(!tmdbKey()){status.textContent='TMDB is not connected yet. Tap “API settings” and add your v3 API key.';grid.innerHTML='';return}
+ status.textContent='Loading movies from TMDB…';grid.innerHTML='';
+ try{
+  let path;
+  if(query.trim()) path='/search/movie?query='+encodeURIComponent(query.trim());
+  else if(mode==='popular') path='/movie/popular';
+  else path='/trending/movie/week';
+  const data=await tmdbRequest(path);
+  tmdbMovies=data.results||[];
+  grid.innerHTML=tmdbMovies.length?tmdbMovies.map(tmdbCard).join(''):'<div class="empty">No movies found. Try another search.</div>';
+  status.textContent=query.trim()?`Search results for “${query.trim()}” · TMDB`:mode==='popular'?'Popular movies · TMDB':'Trending this week · TMDB';
+ }catch(err){status.textContent=err.message;grid.innerHTML='<div class="empty">Could not load TMDB movies. Check your API key and internet connection.</div>'}
+}
+async function showTmdbDetails(id){
+ const m=tmdbMovies.find(x=>Number(x.id)===Number(id));
+ if(!m)return;
+ const status=$('#tmdbStatus');
+ try{
+  const d=await tmdbRequest('/movie/'+encodeURIComponent(id)+'?append_to_response=credits');
+  const title=d.title||'Movie details';
+  const backdrop=d.backdrop_path?`<img src="${esc('https://image.tmdb.org/t/p/w1280'+d.backdrop_path)}" alt="">`:'';
+  const poster=d.poster_path?`<img class="tmdb-poster-large" src="${esc(tmdbImage(d.poster_path))}" alt="">`:'';
+  const cast=(d.credits?.cast||[]).slice(0,5).map(x=>esc(x.name)).join(', ');
+  const genres=(d.genres||[]).map(x=>esc(x.name)).join(' · ');
+  const trailerQuery=encodeURIComponent(title+' official trailer');
+  $('#detailBody').innerHTML=`
+   <div class="detail-backdrop">${backdrop}<div class="detail-backdrop-content"><span class="feature-tag">TMDB MOVIE</span><h2>${esc(title)}</h2><div class="meta">${esc((d.release_date||'').slice(0,4)||'Release date unavailable')} · ★ ${Number(d.vote_average||0).toFixed(1)}/10</div></div></div>
+   <div style="margin-top:16px;min-height:190px">${poster}<p class="tmdb-overview">${esc(d.overview||'No overview is available for this title.')}</p><p class="meta">${genres||'Genre unavailable'}</p><p class="meta">Cast: ${cast||'Not available'}</p><div class="actions"><a class="trailer-link" href="https://www.youtube.com/results?search_query=${trailerQuery}" target="_blank" rel="noopener">▷ Find trailer</a><a class="trailer-link" href="https://www.themoviedb.org/movie/${Number(d.id)}" target="_blank" rel="noopener">TMDB page ↗</a></div></div>
+   <p class="settings-note">Movie metadata and images supplied by TMDB. CINOVA is not endorsed or certified by TMDB.</p>`;
+  $('#detailModal').classList.add('show');
+ }catch(e){status.textContent=e.message}
+}
+$('#tmdbSettings').onclick=()=>{$('#tmdbKeyInput').value=tmdbKey();$('#tmdbSettingsModal').classList.add('show')};
+$('#saveTmdbKey').onclick=()=>{const k=$('#tmdbKeyInput').value.trim();if(!k){alert('Enter your TMDB v3 API key first.');return}localStorage.setItem('cinova_tmdb_v3_key',k);$('#tmdbSettingsModal').classList.remove('show');loadTmdb('trending')};
+$('#clearTmdbKey').onclick=()=>{localStorage.removeItem('cinova_tmdb_v3_key');$('#tmdbKeyInput').value='';$('#tmdbSettingsModal').classList.remove('show');$('#tmdbStatus').textContent='TMDB key removed from this browser.';$('#tmdbGrid').innerHTML=''};
+$('#tmdbTrending').onclick=()=>loadTmdb('trending');
+$('#tmdbPopular').onclick=()=>loadTmdb('popular');
+$('#tmdbGrid').addEventListener('click',e=>{const card=e.target.closest('[data-tmdb-detail]');if(card)showTmdbDetails(card.dataset.tmdbDetail)});
+const originalRunSearch=runSearch;
+runSearch=function(){const q=$('#search').value.trim();if(q){loadTmdb('search',q);showView('home');document.querySelector('#tmdbGrid').scrollIntoView({behavior:'smooth',block:'start'});}else{loadTmdb('trending');originalRunSearch();}};
+
+searchMovies();loadPopular();renderSaved();renderContinue();loadTmdb('trending');
 </script>
 </body></html>
