@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#090b10">
+<meta name="description" content="CINOVA — discover movies, build your watchlist and play your own videos.">
+<title>CINOVA — Movie Discovery</title>
+<style>
+:root{--bg:#090b10;--panel:#121620;--panel2:#1a202c;--text:#f5f7fb;--muted:#9aa4b5;--accent:#e5b84b;--line:#252c39}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif}
+button,input{font:inherit}button{cursor:pointer}.top{position:sticky;top:0;z-index:5;background:#090b10ed;backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
+.nav{max-width:1200px;margin:auto;padding:15px 20px;display:flex;align-items:center;gap:22px}.logo{font-size:21px;font-weight:900;letter-spacing:1.5px;white-space:nowrap}.logo span{color:var(--accent)}.navlinks{display:flex;gap:8px}.navlinks button,.tab{background:none;border:0;color:var(--muted);padding:9px 12px;border-radius:9px}.navlinks button.active,.navlinks button:hover,.tab.active{color:var(--text);background:var(--panel2)}
+.search{margin-left:auto;display:flex;align-items:center;gap:8px;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:0 12px;min-width:180px}.search input{width:100%;min-width:0;background:none;border:0;outline:0;color:var(--text);padding:11px 0}
+main{max-width:1200px;margin:auto;padding:22px 20px 60px}.hero{min-height:290px;border-radius:22px;padding:30px;display:flex;align-items:end;position:relative;overflow:hidden;background:linear-gradient(90deg,#111722 0%,#111722e8 45%,#11172240 100%),radial-gradient(circle at 78% 35%,#8b633b 0,#30364a 28%,#111722 65%);border:1px solid var(--line)}
+.hero:after{content:"";position:absolute;right:8%;top:12%;width:190px;height:230px;border:1px solid #ffffff30;border-radius:100px 100px 12px 12px;transform:rotate(9deg);box-shadow:0 0 80px #e5b84b20}
+.hero-content{position:relative;z-index:1;max-width:560px}.eyebrow{color:var(--accent);font-size:12px;font-weight:800;letter-spacing:2px;text-transform:uppercase}.hero h1{font-size:clamp(30px,5vw,52px);line-height:1.04;margin:10px 0}.hero p{color:#c4cad4;line-height:1.6;max-width:520px}.actions{display:flex;gap:10px;flex-wrap:wrap}.primary,.secondary{border:0;border-radius:10px;padding:11px 17px;font-weight:750}.primary{background:var(--accent);color:#151515}.secondary{background:#ffffff18;color:white;border:1px solid #ffffff30}
+.section-head{display:flex;align-items:center;justify-content:space-between;margin:30px 0 14px;gap:10px}.section-head h2{font-size:20px;margin:0}.section-head small{color:var(--muted)}
+.chips{display:flex;gap:8px;overflow:auto;padding-bottom:6px}.chip{white-space:nowrap;border:1px solid var(--line);background:var(--panel);color:var(--muted);padding:8px 13px;border-radius:30px}.chip.active{background:#e5b84b20;color:var(--accent);border-color:#e5b84b80}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(145px,1fr));gap:17px}.card{min-width:0;background:var(--panel);border:1px solid var(--line);border-radius:13px;overflow:hidden;transition:.18s}.card:hover{transform:translateY(-3px);border-color:#596273}.poster{height:205px;background:linear-gradient(135deg,#293447,#121620);display:flex;align-items:center;justify-content:center;overflow:hidden;color:#7f8da3;font-size:34px}.poster img{width:100%;height:100%;object-fit:cover}.card-info{padding:10px}.card-title{font-size:13px;font-weight:750;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.meta{font-size:11px;color:var(--muted);margin-top:4px}.card-buttons{display:flex;gap:6px;margin-top:9px}.mini{flex:1;border:1px solid var(--line);background:var(--panel2);color:var(--text);border-radius:7px;padding:7px 4px;font-size:11px}.mini.star{flex:0 0 34px;color:var(--accent)}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:18px;margin-top:22px}.panel h3{margin:0 0 8px}.panel p,.hint{color:var(--muted);font-size:13px;line-height:1.55}.local-row{display:flex;gap:12px;align-items:center;flex-wrap:wrap}.file-btn{display:inline-block;background:var(--panel2);border:1px solid var(--line);padding:10px 14px;border-radius:9px;color:var(--text);font-weight:650}.file-btn input{display:none}
+.empty{padding:35px 15px;text-align:center;color:var(--muted);border:1px dashed var(--line);border-radius:14px}.status{color:var(--muted);font-size:13px;margin:12px 0}.footer{text-align:center;color:#687386;font-size:11px;margin-top:35px}
+.modal{position:fixed;inset:0;background:#000c;z-index:10;display:none;align-items:center;justify-content:center;padding:16px}.modal.show{display:flex}.dialog{background:#111722;border:1px solid var(--line);border-radius:18px;width:min(760px,100%);max-height:90vh;overflow:auto;padding:18px}.dialog-head{display:flex;justify-content:space-between;gap:10px}.close{background:var(--panel2);color:white;border:0;border-radius:8px;padding:7px 11px}.detail{display:grid;grid-template-columns:170px 1fr;gap:18px;margin-top:14px}.detail .poster{height:240px;border-radius:10px}.detail p{color:#b7c0ce;line-height:1.6;font-size:14px}.player{width:100%;max-height:65vh;background:#000;border-radius:12px;margin-top:12px}.hidden{display:none!important}
+@media(max-width:650px){.nav{gap:8px;padding:12px}.navlinks{display:none}.search{min-width:0}.hero{min-height:260px;padding:22px}.grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.poster{height:190px}.detail{grid-template-columns:105px 1fr}.detail .poster{height:155px}.section-head{margin-top:24px}}
+
+/* V3 polish */
+.bottom-nav{display:none}
+.backdrop-strip{height:7px;border-radius:10px;background:var(--panel2);overflow:hidden;margin-top:8px}
+.backdrop-strip span{display:block;height:100%;background:var(--accent);width:0}
+.recommend-note{color:var(--muted);font-size:12px;margin-top:6px}
+@media(max-width:650px){
+ body{padding-bottom:70px}
+ .bottom-nav{display:flex;position:fixed;bottom:0;left:0;right:0;z-index:8;background:#0d1119f5;border-top:1px solid var(--line);justify-content:space-around;padding:8px 5px calc(8px + env(safe-area-inset-bottom));backdrop-filter:blur(14px)}
+ .bottom-nav button{border:0;background:none;color:var(--muted);font-size:11px;padding:5px 12px;display:flex;flex-direction:column;align-items:center;gap:2px}
+ .bottom-nav button.active{color:var(--accent)}
+ .bottom-nav b{font-size:18px;line-height:20px}
+ .navlinks{display:none}
+}
+@media(min-width:651px){.bottom-nav{display:none!important}}
+
+/* V4 cinematic details */
+.detail-backdrop{position:relative;min-height:170px;border-radius:13px;overflow:hidden;background:linear-gradient(90deg,#111722 0%,#111722b8 65%,#11172230),linear-gradient(135deg,#39445a,#151b28);margin-top:12px;display:flex;align-items:end;padding:18px}
+.detail-backdrop img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.42;filter:blur(1px)}
+.detail-backdrop-content{position:relative;z-index:1}
+.detail-backdrop h2{font-size:clamp(22px,4vw,34px);margin:0 0 5px}
+.trailer-link{display:inline-flex;align-items:center;gap:7px;background:#ffffff16;border:1px solid #ffffff38;color:white;padding:10px 13px;border-radius:9px;text-decoration:none;font-weight:650;font-size:13px}
+.feature-tag{display:inline-block;background:#e5b84b20;color:var(--accent);border:1px solid #e5b84b50;border-radius:30px;padding:4px 8px;font-size:10px;font-weight:800;letter-spacing:.7px}
+@media(max-width:650px){.detail-backdrop{min-height:145px;padding:14px}}
+
+/* CINOVA V2 — TMDB discovery */
+.tmdb-toolbar{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-top:26px}
+.tmdb-toolbar h2{margin:0;font-size:20px}
+.tmdb-actions{display:flex;gap:8px;flex-wrap:wrap}
+.tmdb-actions button,.settings-btn{border:1px solid var(--line);background:var(--panel2);color:var(--text);padding:9px 12px;border-radius:9px}
+.tmdb-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(135px,1fr));gap:15px;margin-top:14px}
+.tmdb-card{background:var(--panel);border:1px solid var(--line);border-radius:13px;overflow:hidden;min-width:0;cursor:pointer}
+.tmdb-card .poster{height:205px;position:relative}
+.tmdb-card .poster img{width:100%;height:100%;object-fit:cover}
+.tmdb-card .card-info{padding:10px}
+.tmdb-rating{color:var(--accent);font-size:11px;margin-top:5px}
+.tmdb-overview{color:#b7c0ce;line-height:1.6;font-size:14px}
+.settings-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.settings-row input{flex:1;min-width:180px;background:#090d15;border:1px solid var(--line);border-radius:9px;color:white;padding:11px}
+.settings-note{font-size:12px;color:var(--muted);line-height:1.55}
+.tmdb-poster-large{width:120px;height:180px;object-fit:cover;border-radius:10px;float:left;margin:0 15px 10px 0}
+@media(max-width:650px){.tmdb-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.tmdb-card .poster{height:210px}}
+
+</style>
+</head>
+<body>
+<header class="top"><div class="nav">
+  <div class="logo">CINO<span>VA</span></div>
+  <div class="navlinks"><button class="active" data-view="home">Home</button><button data-view="discover">Discover</button><button data-view="saved">My List</button></div>
+  <label class="search">⌕ <input id="search" placeholder="Search movies..." autocomplete="off"><button id="searchBtn" aria-label="Search" style="border:0;background:none;color:var(--accent);font-size:18px;padding:4px">↵</button></label>
+</div></header>
+<nav class="bottom-nav" aria-label="Main navigation">
+ <button class="active" data-view="home"><b>⌂</b>Home</button>
+ <button data-view="discover"><b>⌕</b>Discover</button>
+ <button data-view="saved"><b>☆</b>My List</button>
+</nav>
+<main>
+<section id="hero" class="hero"><div class="hero-content"><div class="eyebrow">CINOVA V2 · Your world of entertainment.</div><h1>Movie night<br>starts here.</h1><p>Discover trending films, explore movie details and build your watchlist. You can also play videos saved on your phone.</p><div class="actions"><button class="primary" id="exploreBtn">Explore movies</button><button class="secondary" id="localBtn">▶ Play a local video</button></div></div></section>
+<div id="homeView">
+  
+  <div class="panel">
+    <div class="tmdb-toolbar"><h2>Discover with TMDB</h2><div class="tmdb-actions"><button id="tmdbSettings" class="settings-btn">⚙ API settings</button><button id="tmdbTrending" class="settings-btn">Trending</button><button id="tmdbPopular" class="settings-btn">Popular</button></div></div>
+    <p class="settings-note" id="tmdbStatus">Connect your TMDB API key in API settings to load live movie discovery.</p>
+    <div class="tmdb-grid" id="tmdbGrid"></div>
+  </div>
+  <div id="continueSection" class="hidden"><div class="section-head"><h2>Continue watching</h2><small>Pick up where you left off</small></div><div id="continueGrid" class="grid"></div></div>
+  <div class="section-head"><h2>Popular on the Archive</h2><small>Sorted by downloads</small></div><div id="popular" class="grid"></div>
+  <div class="section-head"><h2>Explore the library</h2><small>Find your next watch</small></div><p class="recommend-note">Browse by category or search the Archive catalogue. Results depend on what is available there.</p>
+  <div class="chips" id="chips"><button class="chip active" data-cat="all">All</button><button class="chip" data-cat="comedy">Comedy</button><button class="chip" data-cat="drama">Drama</button><button class="chip" data-cat="horror">Horror</button><button class="chip" data-cat="animation">Animation</button><button class="chip" data-cat="science fiction">Sci-Fi</button></div>
+  <div id="status" class="status">Loading movies…</div><div id="movies" class="grid"></div><div class="section-head"><h2>You might also like</h2><small>More from this catalogue</small></div><div id="moreMovies" class="grid"></div>
+</div>
+<div id="savedView" class="hidden"><div class="section-head"><h2>My watchlist</h2><small>Saved on this device</small></div><div id="savedMovies" class="grid"></div></div>
+<div id="discoverView" class="hidden"><div class="section-head"><h2>Discover</h2></div><div class="panel"><h3>Find something to watch</h3><p>Search the archive catalogue or choose a category above. Availability and playback formats depend on each title.</p><button class="primary" id="discoverSearch">Search archive</button></div><div class="section-head"><h2>Watch videos from your phone</h2></div><div class="panel"><div class="local-row"><label class="file-btn">Choose video <input id="localFile" type="file" accept="video/*"></label><span class="hint">MP4, WebM and other formats supported by your browser.</span></div><div id="localName" class="status"></div><video id="localPlayer" class="player hidden" controls playsinline></video></div></div>
+<div class="panel"><h3>About online movies</h3><p>CINOVA searches the Internet Archive catalogue. A listing does not automatically mean a film is public domain or cleared for every use—check the rights information on the title's Archive page before watching or sharing. This starter app does not host or upload movies.</p></div>
+<div class="footer">CINOVA • V2 • Your world of entertainment</div>
+</main>
+
+<div id="tmdbSettingsModal" class="modal"><div class="dialog">
+ <div class="dialog-head"><div class="eyebrow">CINOVA CONNECTION</div><button class="close" data-close="tmdbSettingsModal">✕</button></div>
+ <h2>Connect TMDB</h2>
+ <p class="settings-note">Paste your TMDB API Key (v3) below. It will be saved only in this browser on this device. Do not paste your key into GitHub or share it publicly.</p>
+ <div class="settings-row"><input id="tmdbKeyInput" type="password" autocomplete="off" placeholder="TMDB API Key (v3)"><button class="primary" id="saveTmdbKey">Save key</button></div>
+ <div class="settings-row"><button class="secondary" id="clearTmdbKey">Remove saved key</button></div>
+ <p class="settings-note">Security note: CINOVA is a public static website. A key entered here is not embedded in the published HTML, but browser-based API requests can still expose it to someone inspecting network traffic. For a production public app, use a small server-side proxy and follow TMDB's terms and attribution requirements.</p>
+</div></div>
+
+<div id="detailModal" class="modal"><div class="dialog"><div class="dialog-head"><div class="eyebrow">MOVIE DETAILS</div><button class="close" data-close="detailModal">✕</button></div><div id="detailBody"></div></div></div>
+<div id="playModal" class="modal"><div class="dialog"><div class="dialog-head"><h3 id="playTitle">Now playing</h3><button class="close" data-close="playModal">✕</button></div><video id="onlinePlayer" class="player" controls playsinline></video><div class="actions" style="margin-top:12px"><button class="secondary" id="vlcBtn">Open in VLC</button><a id="archiveLink" class="secondary" target="_blank" rel="noopener" style="text-decoration:none;padding:11px 15px;border-radius:10px">Archive page</a></div><p class="hint">If playback does not start, try the Archive page or open the stream in a compatible player. VLC must be installed for the VLC button to work.</p></div></div>
+<script>
+const API='https://archive.org/advancedsearch.php';
+let movies=[], popularMovies=[], currentCategory='all', currentQuery='', currentMovie=null, currentStream='', progressTimer=null;
+const $=s=>document.querySelector(s);
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function saved(){try{return JSON.parse(localStorage.getItem('cinova_saved')||'[]')}catch{return []}}
+function historyList(){try{return JSON.parse(localStorage.getItem('cinova_history')||'[]')}catch{return []}}
+function saveHistory(m,position,duration){let a=historyList().filter(x=>x.identifier!==m.identifier);a.unshift({...m,position,duration,updated:Date.now()});localStorage.setItem('cinova_history',JSON.stringify(a.slice(0,12)));renderContinue()}
+function isSaved(id){return saved().some(x=>x.identifier===id)}
+function toggleSave(m){let a=saved();a=isSaved(m.identifier)?a.filter(x=>x.identifier!==m.identifier):[m,...a];localStorage.setItem('cinova_saved',JSON.stringify(a));renderMovies();renderSaved()}
+function poster(m){return m.cover||''}
+function card(m){return `<article class="card"><div class="poster">${poster(m)?`<img loading="lazy" src="${esc(poster(m))}" alt="" onerror="this.remove()">`:'🎞️'}</div><div class="card-info"><div class="card-title" title="${esc(m.title)}">${esc(m.title)}</div><div class="meta">${esc(m.year||'Year unknown')} · Archive</div><div class="card-buttons"><button class="mini" data-detail="${esc(m.identifier)}">Details</button><button class="mini star" data-save="${esc(m.identifier)}">${isSaved(m.identifier)?'★':'☆'}</button></div></div></article>`}
+function renderMovies(){
+ let list=movies;
+ $('#movies').innerHTML=list.length?list.slice(0,18).map(card).join(''):'<div class="empty">No titles found. Try another search.</div>';
+ $('#status').textContent=`${list.length} titles loaded from Internet Archive`;
+ const more=list.slice(18,30);
+ $('#moreMovies').innerHTML=more.length?more.map(card).join(''):'<div class="empty">Search a category or title to discover more.</div>';
+ }
+function renderContinue(){
+ const items=historyList();
+ $('#continueSection').classList.toggle('hidden',!items.length);
+ $('#continueGrid').innerHTML=items.map(m=>{
+  const cover=m.cover ? '<img loading="lazy" src="'+esc(m.cover)+'" alt="">' : '🎞️';
+  const progress=m.duration ? Math.round((m.position/m.duration)*100)+'% watched' : 'Recently opened';
+  return '<article class="card"><div class="poster">'+cover+'</div><div class="card-info"><div class="card-title">'+esc(m.title)+'</div><div class="meta">'+progress+'</div><div class="card-buttons"><button class="mini" data-resume="'+esc(m.identifier)+'">Resume</button><button class="mini star" data-removehistory="'+esc(m.identifier)+'">×</button></div></div></article>';
+ }).join('');
+}
+function renderPopular(){let el=$('#popular');if(!el)return;el.innerHTML=popularMovies.length?popularMovies.map(card).join(''):'<div class="empty">Popular titles will appear when the catalogue loads.</div>'}
+function renderSaved(){let a=saved();$('#savedMovies').innerHTML=a.length?a.map(card).join(''):'<div class="empty">Your watchlist is empty. Tap ☆ on a movie to save it.</div>'}
+async function searchMovies(q='',cat='all'){
+ currentQuery=q;currentCategory=cat;$('#status').textContent='Searching the Internet Archive…';$('#movies').innerHTML='';
+ let terms=['mediatype:movies'];
+ if(q) terms.push('(' + q.trim().split(/\s+/).map(w=>'title:'+w).join(' AND ') + ')');
+ if(cat!=='all') terms.push('(' + cat.split(' ').map(w=>'subject:'+w).join(' AND ') + ')');
+ const params=new URLSearchParams({q:terms.join(' AND '),fl:'identifier,title,year,description',rows:'36',page:'1',output:'json'});
+ try{
+  const r=await fetch(`${API}?${params}`);if(!r.ok)throw Error('Network response failed');
+  const data=await r.json();movies=(data.response?.docs||[]).map(x=>({...x,title:x.title||x.identifier,cover:`https://archive.org/services/img/${encodeURIComponent(x.identifier)}`}));renderMovies();
+ }catch(e){$('#status').textContent='Could not reach the movie catalogue. Check your connection or open archive.org in your browser.';$('#movies').innerHTML='<div class="empty">Online catalogue unavailable right now. You can still play a video stored on your phone.</div>'}
+}
+async function details(id){
+ let m=movies.find(x=>x.identifier===id)||saved().find(x=>x.identifier===id)||popularMovies.find(x=>x.identifier===id);
+ if(!m)return;
+ currentMovie=m;
+ const trailerQuery=encodeURIComponent((m.title||'')+' official trailer');
+ const archiveUrl=`https://archive.org/details/${encodeURIComponent(id)}`;
+ $('#detailBody').innerHTML=`
+ <div class="detail-backdrop">${m.cover?`<img src="${esc(m.cover)}" alt="">`:''}
+  <div class="detail-backdrop-content"><span class="feature-tag">INTERNET ARCHIVE</span><h2>${esc(m.title)}</h2>
+  <div class="meta">${esc(m.year||'Year unknown')} · Archive catalogue</div></div>
+ </div>
+ <div class="detail" style="grid-template-columns:1fr;margin-top:14px">
+  <div><p>${esc(m.description||'No description provided by the archive.')}</p>
+   <div class="actions">
+    <button class="primary" id="playMovie">▶ Find playable video</button>
+    <button class="secondary" id="saveDetail">${isSaved(id)?'Remove from list':'＋ My List'}</button>
+    <a class="trailer-link" href="https://www.youtube.com/results?search_query=${trailerQuery}" target="_blank" rel="noopener">▷ Find trailer</a>
+    <a class="trailer-link" href="${archiveUrl}" target="_blank" rel="noopener">Rights & details ↗</a>
+   </div>
+   <p class="hint">Trailer search opens YouTube results. Trailer availability and movie playback depend on the external source.</p>
+  </div>
+ </div>`;
+ $('#detailModal').classList.add('show');
+ $('#playMovie').onclick=()=>playArchive(m);
+ $('#saveDetail').onclick=()=>{toggleSave(m);details(id)};
+}
+async function playArchive(m){
+ currentMovie=m;
+ $('#detailModal').classList.remove('show');$('#playTitle').textContent=m.title;$('#playModal').classList.add('show');$('#onlinePlayer').removeAttribute('src');$('#onlinePlayer').load();$('#playTitle').textContent=m.title+' — finding video…';
+ try{
+  const r=await fetch(`https://archive.org/metadata/${encodeURIComponent(m.identifier)}`);const data=await r.json();
+  const files=(data.files||[]).filter(f=>f.name&&/\.(mp4|m4v|webm|ogv)$/i.test(f.name)&&!f.name.includes('__ia_thumb'));
+  files.sort((a,b)=>(Number(a.size)||Infinity)-(Number(b.size)||Infinity));
+  if(!files.length)throw Error('No browser-friendly video file found');
+  const f=files[0];currentStream=`https://archive.org/download/${encodeURIComponent(m.identifier)}/${f.name.split('/').map(encodeURIComponent).join('/')}`;
+  $('#onlinePlayer').src=currentStream;$('#onlinePlayer').load();$('#playTitle').textContent=m.title;
+  const previous=historyList().find(x=>x.identifier===m.identifier);
+  if(previous&&previous.position>8)$('#onlinePlayer').addEventListener('loadedmetadata',function seekOnce(){this.currentTime=Math.min(previous.position,Math.max(0,this.duration-5));this.removeEventListener('loadedmetadata',seekOnce)},{once:true});
+  $('#archiveLink').href=`https://archive.org/details/${encodeURIComponent(m.identifier)}`;
+ }catch(e){$('#playTitle').textContent='No compatible video found';$('#onlinePlayer').classList.add('hidden');$('#archiveLink').href=`https://archive.org/details/${encodeURIComponent(m.identifier)}`;}
+}
+function showView(v){$('#homeView').classList.toggle('hidden',v!=='home');$('#savedView').classList.toggle('hidden',v!=='saved');$('#discoverView').classList.toggle('hidden',v!=='discover');document.querySelectorAll('[data-view]').forEach(b=>b.classList.toggle('active',b.dataset.view===v));if(v==='saved')renderSaved()}
+document.querySelectorAll('[data-view]').forEach(b=>b.onclick=()=>showView(b.dataset.view));
+$('#chips').onclick=e=>{let b=e.target.closest('[data-cat]');if(!b)return;document.querySelectorAll('.chip').forEach(x=>x.classList.toggle('active',x===b));searchMovies($('#search').value,b.dataset.cat)};
+function runSearch(){showView('home');searchMovies($('#search').value,currentCategory)}
+$('#search').addEventListener('keydown',e=>{if(e.key==='Enter')runSearch()});
+$('#searchBtn').onclick=runSearch;
+$('#discoverSearch').onclick=()=>{showView('home');searchMovies($('#search').value,currentCategory)};
+$('#exploreBtn').onclick=()=>document.querySelector('#homeView').scrollIntoView({behavior:'smooth'});
+$('#localBtn').onclick=()=>{showView('discover');$('#localFile').click()};
+$('#localFile').onchange=e=>{let f=e.target.files[0];if(!f)return;let v=$('#localPlayer');if(v.dataset.url)URL.revokeObjectURL(v.dataset.url);let u=URL.createObjectURL(f);v.dataset.url=u;v.src=u;v.classList.remove('hidden');$('#localName').textContent='Ready to play: '+f.name;v.play().catch(()=>{})};
+document.addEventListener('click',e=>{let d=e.target.closest('[data-detail]'),s=e.target.closest('[data-save]');if(d)details(d.dataset.detail);if(s){let m=movies.find(x=>x.identifier===s.dataset.save)||saved().find(x=>x.identifier===s.dataset.save);if(m)toggleSave(m)}});
+document.querySelectorAll('[data-close]').forEach(b=>b.onclick=()=>$( '#'+b.dataset.close).classList.remove('show'));
+document.querySelectorAll('.modal').forEach(m=>m.addEventListener('click',e=>{if(e.target===m)m.classList.remove('show')}));
+$('#vlcBtn').onclick=()=>{if(!currentStream)return;const intent='intent://'+currentStream.replace(/^https?:\/\//,'')+'#Intent;scheme=https;package=org.videolan.vlc;type=video/*;end';location.href=intent;setTimeout(()=>{if(document.visibilityState==='visible')window.open(currentStream,'_blank')},1200)};
+async function loadPopular(){
+ try{
+  const p=new URLSearchParams({q:'mediatype:movies',fl:'identifier,title,year,description',rows:'12',page:'1',output:'json',sort:'downloads desc'});
+  const r=await fetch(`${API}?${p}`);if(!r.ok)throw Error();const d=await r.json();
+  popularMovies=(d.response?.docs||[]).map(x=>({...x,title:x.title||x.identifier,cover:`https://archive.org/services/img/${encodeURIComponent(x.identifier)}`}));renderPopular();
+ }catch{$('#popular').innerHTML='<div class="empty">Could not load popular titles right now.</div>'}
+}
+document.addEventListener('click',e=>{
+ const resume=e.target.closest('[data-resume]');const remove=e.target.closest('[data-removehistory]');
+ if(resume){let m=historyList().find(x=>x.identifier===resume.dataset.resume);if(m)playArchive(m)}
+ if(remove){localStorage.setItem('cinova_history',JSON.stringify(historyList().filter(x=>x.identifier!==remove.dataset.removehistory)));renderContinue()}
+});
+$('#onlinePlayer').addEventListener('timeupdate',()=>{if(currentMovie&&$('#onlinePlayer').duration){saveHistory(currentMovie,$('#onlinePlayer').currentTime,$('#onlinePlayer').duration)}});
+$('#onlinePlayer').addEventListener('ended',()=>{if(currentMovie){localStorage.setItem('cinova_history',JSON.stringify(historyList().filter(x=>x.identifier!==currentMovie.identifier)));renderContinue()}});
+
+// ---- CINOVA V2: TMDB discovery layer ----
+const TMDB_BASE='https://api.themoviedb.org/3';
+const TMDB_IMG='https://image.tmdb.org/t/p/w500';
+let tmdbMovies=[], tmdbMode='trending';
+function tmdbKey(){return localStorage.getItem('cinova_tmdb_v3_key')||''}
+function tmdbImage(path){return path?TMDB_IMG+path:''}
+function tmdbCard(m){
+ const title=m.title||m.name||'Untitled';
+ const year=(m.release_date||m.first_air_date||'').slice(0,4);
+ const image=tmdbImage(m.poster_path);
+ return `<article class="tmdb-card" data-tmdb-detail="${Number(m.id)}">
+  <div class="poster">${image?`<img loading="lazy" src="${esc(image)}" alt="${esc(title)} poster" onerror="this.remove()">`:'🎬'}</div>
+  <div class="card-info"><div class="card-title" title="${esc(title)}">${esc(title)}</div>
+  <div class="meta">${esc(year||'Release date unavailable')}</div>
+  <div class="tmdb-rating">★ ${Number(m.vote_average||0).toFixed(1)} / 10</div></div></article>`;
+}
+async function tmdbRequest(path){
+ const key=tmdbKey();
+ if(!key) throw new Error('Add your TMDB v3 API key in API settings first.');
+ const url=new URL(TMDB_BASE+path);
+ url.searchParams.set('api_key',key);
+ const response=await fetch(url.toString());
+ const data=await response.json().catch(()=>({}));
+ if(!response.ok) throw new Error(data.status_message||'TMDB request failed. Check your key and connection.');
+ return data;
+}
+async function loadTmdb(mode='trending',query=''){
+ tmdbMode=mode;
+ const status=$('#tmdbStatus'),grid=$('#tmdbGrid');
+ if(!tmdbKey()){status.textContent='TMDB is not connected yet. Tap “API settings” and add your v3 API key.';grid.innerHTML='';return}
+ status.textContent='Loading movies from TMDB…';grid.innerHTML='';
+ try{
+  let path;
+  if(query.trim()) path='/search/movie?query='+encodeURIComponent(query.trim());
+  else if(mode==='popular') path='/movie/popular';
+  else path='/trending/movie/week';
+  const data=await tmdbRequest(path);
+  tmdbMovies=data.results||[];
+  grid.innerHTML=tmdbMovies.length?tmdbMovies.map(tmdbCard).join(''):'<div class="empty">No movies found. Try another search.</div>';
+  status.textContent=query.trim()?`Search results for “${query.trim()}” · TMDB`:mode==='popular'?'Popular movies · TMDB':'Trending this week · TMDB';
+ }catch(err){status.textContent=err.message;grid.innerHTML='<div class="empty">Could not load TMDB movies. Check your API key and internet connection.</div>'}
+}
+async function showTmdbDetails(id){
+ const m=tmdbMovies.find(x=>Number(x.id)===Number(id));
+ if(!m)return;
+ const status=$('#tmdbStatus');
+ try{
+  const d=await tmdbRequest('/movie/'+encodeURIComponent(id)+'?append_to_response=credits');
+  const title=d.title||'Movie details';
+  const backdrop=d.backdrop_path?`<img src="${esc('https://image.tmdb.org/t/p/w1280'+d.backdrop_path)}" alt="">`:'';
+  const poster=d.poster_path?`<img class="tmdb-poster-large" src="${esc(tmdbImage(d.poster_path))}" alt="">`:'';
+  const cast=(d.credits?.cast||[]).slice(0,5).map(x=>esc(x.name)).join(', ');
+  const genres=(d.genres||[]).map(x=>esc(x.name)).join(' · ');
+  const trailerQuery=encodeURIComponent(title+' official trailer');
+  $('#detailBody').innerHTML=`
+   <div class="detail-backdrop">${backdrop}<div class="detail-backdrop-content"><span class="feature-tag">TMDB MOVIE</span><h2>${esc(title)}</h2><div class="meta">${esc((d.release_date||'').slice(0,4)||'Release date unavailable')} · ★ ${Number(d.vote_average||0).toFixed(1)}/10</div></div></div>
+   <div style="margin-top:16px;min-height:190px">${poster}<p class="tmdb-overview">${esc(d.overview||'No overview is available for this title.')}</p><p class="meta">${genres||'Genre unavailable'}</p><p class="meta">Cast: ${cast||'Not available'}</p><div class="actions"><a class="trailer-link" href="https://www.youtube.com/results?search_query=${trailerQuery}" target="_blank" rel="noopener">▷ Find trailer</a><a class="trailer-link" href="https://www.themoviedb.org/movie/${Number(d.id)}" target="_blank" rel="noopener">TMDB page ↗</a></div></div>
+   <p class="settings-note">Movie metadata and images supplied by TMDB. CINOVA is not endorsed or certified by TMDB.</p>`;
+  $('#detailModal').classList.add('show');
+ }catch(e){status.textContent=e.message}
+}
+$('#tmdbSettings').onclick=()=>{$('#tmdbKeyInput').value=tmdbKey();$('#tmdbSettingsModal').classList.add('show')};
+$('#saveTmdbKey').onclick=()=>{const k=$('#tmdbKeyInput').value.trim();if(!k){alert('Enter your TMDB v3 API key first.');return}localStorage.setItem('cinova_tmdb_v3_key',k);$('#tmdbSettingsModal').classList.remove('show');loadTmdb('trending')};
+$('#clearTmdbKey').onclick=()=>{localStorage.removeItem('cinova_tmdb_v3_key');$('#tmdbKeyInput').value='';$('#tmdbSettingsModal').classList.remove('show');$('#tmdbStatus').textContent='TMDB key removed from this browser.';$('#tmdbGrid').innerHTML=''};
+$('#tmdbTrending').onclick=()=>loadTmdb('trending');
+$('#tmdbPopular').onclick=()=>loadTmdb('popular');
+$('#tmdbGrid').addEventListener('click',e=>{const card=e.target.closest('[data-tmdb-detail]');if(card)showTmdbDetails(card.dataset.tmdbDetail)});
+const originalRunSearch=runSearch;
+runSearch=function(){const q=$('#search').value.trim();if(q){loadTmdb('search',q);showView('home');document.querySelector('#tmdbGrid').scrollIntoView({behavior:'smooth',block:'start'});}else{loadTmdb('trending');originalRunSearch();}};
+
+searchMovies();loadPopular();renderSaved();renderContinue();loadTmdb('trending');
+</script>
+</body></html>
